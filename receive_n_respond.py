@@ -22,8 +22,8 @@ greenUrl4= 'http://sboxled4.local/win&R=0&G=255&B=0'
 whiteUrl4= 'http://sboxled4.local/win&R=255&G=255&B=255'
 
 #Raspberry A
-host = "192.168.40.90"
-port = 5005
+host = "192.168.40.90"  #Hay que cambiar por raspberry
+port = 5005             #Hay que cambiar por raspberry
 
 storedValue = "Sergio es Dios"
 
