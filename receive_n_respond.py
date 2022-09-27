@@ -1,14 +1,29 @@
+#!/usr/bin/env python3
 import time
-#time.sleep(45)
+time.sleep(45)
 
-import serial
+
 import socket
 
 import requests
+from OpenBox import cajaNro
 
-#Raspberry B
-host = "192.168.101.29"
-port = 5005
+#Url de cintas LED
+greenUrl1= 'http://sboxled1.local/win&R=0&G=255&B=0'
+whiteUrl1= 'http://sboxled1.local/win&R=255&G=255&B=255'
+
+greenUrl2= 'http://sboxled2.local/win&R=0&G=255&B=0'
+whiteUrl2= 'http://sboxled2.local/win&R=255&G=255&B=255'
+
+greenUrl3= 'http://sboxled3.local/win&R=0&G=255&B=0'
+whiteUrl3= 'http://sboxled3.local/win&R=255&G=255&B=255'
+
+greenUrl4= 'http://sboxled4.local/win&R=0&G=255&B=0'
+whiteUrl4= 'http://sboxled4.local/win&R=255&G=255&B=255'
+
+#Raspberry A
+host = "192.168.40.90"  #Hay que cambiar por raspberry
+port = 5005             #Hay que cambiar por raspberry
 
 storedValue = "Sergio es Dios"
 
@@ -23,7 +38,7 @@ def setupServer():
     return s
 
 def setupConnection():
-    s.listen(1) # Allows one connection at a time.
+    s.listen(2) # Allows two connection at a time.
     conn, address = s.accept()
     print("Connected to: " + address[0] + ":" + str(address[1]))
     return conn
@@ -32,81 +47,97 @@ def GET():
     reply = storedValue
     return reply
 
-def abrir():
-    if __name__ == '__main__':
-        ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
-        ser.flush()
-        for x in range(2):        
-            ser.write(b"ABRIR\n")
-            line = ser.readline().decode('utf-8').rstrip()
-            print(line)
-            time.sleep(1)
-        
-        
-def cerrar():
-    if __name__ == '__main__':
-        ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
-        ser.flush()
-        for x in range(2):        
-            ser.write(b"CERRAR\n")
-            line = ser.readline().decode('utf-8').rstrip()
-            print(line)
-            time.sleep(1)
-
 def dataTransfer(conn):
     # A big loop that sends/receives data until told not to.
-    while True:
-        # Receive the data
+    reply = "default"
+    print("Recibiendo Datos")
+    # Receive the data
+    try:
         data = conn.recv(1024) # receive the data
-        if (data == b''):
-            print("Ingreso vacio")
-            break
         data = data.decode('utf-8')
-        # Split the data such that you separate the command
-        # from the rest of the data.
-        dataMessage = data.split(' ', 1)
-        command = dataMessage[0]
-        
-        print("mensaje: ", command)
-        
-        try: 
-            if command == "ABRIR":
-                #motor hacia la derecha
-                abrir()
-                reply = "Giramos hacia Arriba"
-            elif command == "CERRAR":
-                #motor hacia la izquierda
-                cerrar()
-                reply = "Giramos hacia Abajo"
-            elif command == 'GET':
-                reply = GET()
-            elif command == 'EXIT':
-                print("Our client has left us :(")
-                break
-            elif command == 'KILL':
-                print("Our server is shutting down.")
-                s.close()
-                break
-            else:
-                print("Our server is shutting down.")
-                break
-            
-        except:
-            reply = "Error al abrir caja"
-            break
+    except:
+        print("Error al recibir datos")
+        conn.close()
+        return
+    
         
 
-        # Send the reply back to the client
-        conn.sendall(str.encode(reply))
-        print("Data has been sent!")
+    # Split the data such that you separate the command
+    # from the rest of the data.
+    dataMessage = data.split(' ', 1)
+    command = dataMessage[0]
+
+    print("mensaje: ", len(command))
+
+    try:
+        if (len(command) == 0):
+            print("Ingreso vacio")
+            reply = "Ingreso vacio"
+
+        elif command == "BOX1":
+            cajaNro(1)
+            reply = "Abrimos caja 1"
+            x = requests.get(whiteUrl1)
+            print(x.status_code)
+        elif command == "BOX2":
+            cajaNro(2)
+            reply = "Abrimos caja 2"
+            x = requests.get(whiteUrl2)
+            print(x.status_code)
+        elif command == "BOX3":
+            cajaNro(3)
+            reply = "Abrimos caja 3"
+            x = requests.get(whiteUrl3)
+            print(x.status_code)
+        elif command == "BOX4":
+            cajaNro(4)
+            reply = "Abrimos caja 4"
+            x = requests.get(whiteUrl4)
+            print(x.status_code)
+        elif command == "GREEN1":
+            x = requests.get(greenUrl1)
+            print(x.status_code)
+            reply = "Leds 1 verdes"
+        elif command == "GREEN2":
+            x = requests.get(greenUrl2)
+            print(x.status_code)
+            reply = "Leds 2 verdes"
+        elif command == "GREEN3":
+            x = requests.get(greenUrl3)
+            print(x.status_code)
+            reply = "Leds 3 verdes"
+        elif command == "GREEN4":
+            x = requests.get(greenUrl4)
+            print(x.status_code)
+            reply = "Leds 4 verdes"
+            
+        elif command == 'GET':
+            reply = GET()
+        elif command == 'EXIT':
+            print("Our client has left us :(")
+        elif command == 'KILL':
+            print("Our server is shutting down.")
+            s.close()
+        else:
+            print("No encontramos el comando ingresado")
+            
+        
+    except:
+        reply = "Error al abrir caja"
+        
+    # Send the reply back to the client
+    conn.sendall(str.encode(reply))
+    print("Data has been sent!")
     conn.close()
         
 
 s = setupServer()
 
 while True:
+    time.sleep(0.5)
     try:
         conn = setupConnection()
         dataTransfer(conn)
     except:
+        time.sleep(1)
         break
