@@ -1,15 +1,16 @@
 import time
 time.sleep(45)
 
+import serial
 import socket
 
 import requests
-from motor import motorDer, motorIzq
 
 #Raspberry B
-host = "192.168.101.29"
+host = "192.168.101.19"
 port = 5005
 
+isOpen= False
 storedValue = "Sergio es Dios"
 
 def setupServer():
@@ -32,6 +33,29 @@ def GET():
     reply = storedValue
     return reply
 
+def abrir():
+    if __name__ == '__main__' and isOpen == False:
+        ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
+        ser.flush()
+        for x in range(2):        
+            ser.write(b"ABRIR\n")
+            line = ser.readline().decode('utf-8').rstrip()
+            print(line)
+            time.sleep(1)
+        isOpen = True
+        
+        
+def cerrar():
+    if __name__ == '__main__' and isOpen == True:
+        ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
+        ser.flush()
+        for x in range(2):        
+            ser.write(b"CERRAR\n")
+            line = ser.readline().decode('utf-8').rstrip()
+            print(line)
+            time.sleep(1)
+        isOpen = False
+
 def dataTransfer(conn):
     # A big loop that sends/receives data until told not to.
     while True:
@@ -51,11 +75,11 @@ def dataTransfer(conn):
         try: 
             if command == "ABRIR":
                 #motor hacia la derecha
-                motorDer()
+                abrir()
                 reply = "Giramos hacia Arriba"
             elif command == "CERRAR":
                 #motor hacia la izquierda
-                motorIzq()
+                cerrar()
                 reply = "Giramos hacia Abajo"
             elif command == 'GET':
                 reply = GET()
