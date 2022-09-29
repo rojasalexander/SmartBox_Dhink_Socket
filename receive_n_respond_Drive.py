@@ -34,7 +34,7 @@ def GET():
     return reply
 
 def abrir():
-    if __name__ == '__main__' and isOpen == False:
+    if __name__ == '__main__':
         ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
         ser.flush()
         for x in range(2):        
@@ -42,11 +42,10 @@ def abrir():
             line = ser.readline().decode('utf-8').rstrip()
             print(line)
             time.sleep(1)
-        isOpen = True
         
         
 def cerrar():
-    if __name__ == '__main__' and isOpen == True:
+    if __name__ == '__main__':
         ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
         ser.flush()
         for x in range(2):        
@@ -54,7 +53,6 @@ def cerrar():
             line = ser.readline().decode('utf-8').rstrip()
             print(line)
             time.sleep(1)
-        isOpen = False
 
 def dataTransfer(conn):
     # A big loop that sends/receives data until told not to.
@@ -72,15 +70,24 @@ def dataTransfer(conn):
         
         print("mensaje: ", command)
         
-        try: 
+        try:
+            global isOpen
             if command == "ABRIR":
                 #motor hacia la derecha
-                abrir()
-                reply = "Giramos hacia Arriba"
+                if isOpen == False:
+                    abrir()
+                    isOpen = True
+                    reply = "Abrimos el smartbox"
+                else:
+                     reply = "El box ya esta abierto"
             elif command == "CERRAR":
                 #motor hacia la izquierda
-                cerrar()
-                reply = "Giramos hacia Abajo"
+                if isOpen == True:
+                    cerrar()
+                    isOpen = False
+                    reply = "Cerramos el smartbox"
+                else:
+                     reply = "El box ya esta cerrado"
             elif command == 'GET':
                 reply = GET()
             elif command == 'EXIT':
@@ -113,3 +120,4 @@ while True:
         dataTransfer(conn)
     except:
         break
+
