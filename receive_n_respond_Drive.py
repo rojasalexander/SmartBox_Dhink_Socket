@@ -1,5 +1,5 @@
 import time
-#time.sleep(45)
+time.sleep(45)
 
 import serial
 import socket
