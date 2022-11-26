@@ -1,5 +1,5 @@
 import time
-time.sleep(45)
+#time.sleep(45)
 
 import serial
 import socket
@@ -7,10 +7,9 @@ import socket
 import requests
 
 #Raspberry B
-host = "192.168.101.19"
+host = "192.168.101.17"
 port = 5005
 
-isOpen= False
 storedValue = "Sergio es Dios"
 
 def setupServer():
@@ -35,24 +34,35 @@ def GET():
 
 def abrir():
     if __name__ == '__main__':
+        print("FUNCIONA?")
         ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
+        time.sleep(0.1)
         ser.flush()
-        for x in range(2):        
+        time.sleep(0.1)
+            
+        while True:
             ser.write(b"ABRIR\n")
-            line = ser.readline().decode('utf-8').rstrip()
-            print(line)
-            time.sleep(1)
+            if(ser.in_waiting > 0):
+                line = ser.readline().decode('utf-8').rstrip()
+                print(line)
+                if line == "ABIERTO":
+                    print("terminando proceso")
+                    break
         
         
-def cerrar():
+def cerrar():            
     if __name__ == '__main__':
         ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
+        time.sleep(0.1)
         ser.flush()
-        for x in range(2):        
+        while True:        
             ser.write(b"CERRAR\n")
-            line = ser.readline().decode('utf-8').rstrip()
-            print(line)
-            time.sleep(1)
+            if(ser.in_waiting > 0):
+                line = ser.readline().decode('utf-8').rstrip()
+                print(line)
+                if line == "CERRADO":
+                    print("terminando proceso")
+                    break
 
 def dataTransfer(conn):
     # A big loop that sends/receives data until told not to.
@@ -71,23 +81,16 @@ def dataTransfer(conn):
         print("mensaje: ", command)
         
         try:
-            global isOpen
             if command == "ABRIR":
-                #motor hacia la derecha
-                if isOpen == False:
-                    abrir()
-                    isOpen = True
-                    reply = "Abrimos el smartbox"
-                else:
-                     reply = "El box ya esta abierto"
+                #motor hacia la derecha                
+                abrir()
+                reply = "Abrimos el smartbox"
+                
             elif command == "CERRAR":
-                #motor hacia la izquierda
-                if isOpen == True:
-                    cerrar()
-                    isOpen = False
-                    reply = "Cerramos el smartbox"
-                else:
-                     reply = "El box ya esta cerrado"
+                #motor hacia la izquierda                
+                cerrar()
+                reply = "Cerramos el smartbox"
+                    
             elif command == 'GET':
                 reply = GET()
             elif command == 'EXIT':
@@ -115,9 +118,9 @@ def dataTransfer(conn):
 s = setupServer()
 
 while True:
+    time.sleep(0.5)
     try:
         conn = setupConnection()
         dataTransfer(conn)
     except:
         break
-
