@@ -33,36 +33,25 @@ def GET():
     return reply
 
 def abrir():
-    if __name__ == '__main__':
-        print("FUNCIONA?")
-        ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
-        time.sleep(0.1)
-        ser.flush()
-        time.sleep(0.1)
-            
-        while True:
+    ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
+    time.sleep(1)
+
+    for i in range(2):
+        if i == 1:
             ser.write(b"ABRIR\n")
-            if(ser.in_waiting > 0):
-                line = ser.readline().decode('utf-8').rstrip()
-                print(line)
-                if line == "ABIERTO":
-                    print("terminando proceso")
-                    break
+        print(ser.readline().decode('utf-8').rstrip())
+        time.sleep(1)
         
         
-def cerrar():            
-    if __name__ == '__main__':
-        ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
-        time.sleep(0.1)
-        ser.flush()
-        while True:        
+def cerrar():          
+    ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
+    time.sleep(1)
+
+    for i in range(2):
+        if i == 1:
             ser.write(b"CERRAR\n")
-            if(ser.in_waiting > 0):
-                line = ser.readline().decode('utf-8').rstrip()
-                print(line)
-                if line == "CERRADO":
-                    print("terminando proceso")
-                    break
+        print(ser.readline().decode('utf-8').rstrip())
+        time.sleep(1)
 
 def dataTransfer(conn):
     # A big loop that sends/receives data until told not to.
