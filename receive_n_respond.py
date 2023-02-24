@@ -25,7 +25,7 @@ whiteUrl4= 'http://sboxled4.local/win&R=255&G=255&B=255'
 host = "192.168.40.90"  #Hay que cambiar por raspberry
 port = 5005             #Hay que cambiar por raspberry
 
-storedValue = "Sergio es Dios"
+storedValue = "Get response"
 
 def setupServer():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -38,7 +38,7 @@ def setupServer():
     return s
 
 def setupConnection():
-    s.listen(2) # Allows two connection at a time.
+    s.listen(4) # Allows four connection at a time.
     conn, address = s.accept()
     print("Connected to: " + address[0] + ":" + str(address[1]))
     return conn
