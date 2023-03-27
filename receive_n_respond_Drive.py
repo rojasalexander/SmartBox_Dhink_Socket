@@ -7,10 +7,10 @@ import socket
 import requests
 
 #Raspberry B
-host = "192.168.101.17"
-port = 5005
+host = ""
+port = 
 
-storedValue = "Sergio es Dios"
+storedValue = "Testing123"
 
 def setupServer():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
