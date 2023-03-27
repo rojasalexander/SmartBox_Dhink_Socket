@@ -1,8 +1,8 @@
 # SmartBox_Dhink_Socket
 
-Openbox.py -> Here contains the GPIO Pins of the Walk-through Raspberry Pi Smartbox where we can open the containers.
+Openbox.py -> Contains the GPIO Pins of the Walk-through Raspberry Pi Smartbox where we can open the containers.
 
-plubBoxConBotonYSensor.ino -> Here contains the Arduino code for the Motor Controller and Area Sensors of the Drive-through Smartbox
+plubBoxConBotonYSensor.ino -> Contains the Arduino code for the Motor Controller and Area Sensors of the Drive-through Smartbox
 
 receive_n_respond.py -> Contains the communication logic of the Rapsberry Pi Socket Server for the Walk-through Smartbox
 
